@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用WebGL绘制一个点</title>
+    <script src="./initShader.js"></script>
+</head>
+<body>
+    <canvas id="webgl" width="500" height="500" style="background-color: #f2f2f2;"></canvas>
+</body>
+
+<!-- 顶点着色器源码 -->
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        // 给内置变量gl_PointSize赋值像素大小
+        gl_PointSize = 50.0;
+
+        // 顶点位置，位于坐标原点
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</script>
+
+<!-- 片源着色器 -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+    void main() {
+        gl_FragColor = vec4(0.7, 0.5, 1.0, 1.0);
+    }
+</script>
+
+<script>
+    // 通过getElementById获取canvas画布
+    /** @type{HTMLCanvasElement} */
+    let canvas = document.getElementById('webgl');
+
+    // 通过getContext()获取WebGL上下文
+    /** @type{WebGLRenderingContext} */
+    let gl = canvas.getContext('webgl');
+
+    // 顶点着色器源码
+    let vertexShaderSource = document.getElementById('vertexShader').innerText;
+
+    // 片源着色器源码
+    let fragmentShaderSource = document.getElementById('fragmentShader').innerText;
+
+    // 初始化着色器
+    let program = initShader(gl, vertexShaderSource, fragmentShaderSource);
+
+    // 使用program
+    gl.useProgram(program);
+
+    // 开始绘制，显示器显示结果
+    gl.drawArrays(gl.POINTS, 0, 1);
+</script>
+</html>

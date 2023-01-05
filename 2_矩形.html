@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绘制矩形</title>
+    <script src="./initShader.js"></script>
+</head>
+<body>
+    <canvas id="webgl" width="500" height="500" style="background-color: #f2f2f2;"></canvas>
+</body>
+
+<!-- 顶点着色器源码 -->
+<script id="vertexShader" type="x-shader/x-vertex">
+    // attribute声明vec4类型变量
+    attribute vec4 apos;
+
+    void main() {
+        // 顶点坐标变量apos赋值给内置变量gl_Position
+        gl_Position = apos;
+    }
+</script>
+
+<!-- 片源着色器 -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+    void main() {
+        gl_FragColor = vec4(0.7, 0.5, 1.0, 1.0);
+    }
+</script>
+
+<script></script>
+</html>
