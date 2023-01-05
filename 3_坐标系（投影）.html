@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>绘制矩形</title>
+    <title>坐标系（投影）</title>
     <script src="./initShader.js"></script>
 </head>
 <body>
@@ -17,8 +17,16 @@
     attribute vec4 apos;
 
     void main() {
-        // 顶点坐标变量apos赋值给内置变量gl_Position
-        gl_Position = apos;
+        // 平移矩阵
+        mat4 m4 = mat4(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            -0.6, 0, 0, 1
+        );
+
+        // 平移矩阵m4左乘顶点坐标变量apos赋值给内置变量gl_Position
+        gl_Position = m4 * apos;
     }
 </script>
 
@@ -50,28 +58,24 @@
     // 使用program
     gl.useProgram(program);
 
-    // 类型数组构造函数Float32Array创建顶点数组
-    const pointsArr = new Float32Array([0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5]);
+    const pointsArr = new Float32Array([
+        0.0, 0.0, 1.0,  // 三角形顶点1坐标
+        0.0, 1.0, 0.0,  // 三角形顶点2坐标
+        1.0, 0.0, 0.0,  // 三角形顶点3坐标
+    ])
 
-    // 获取顶点着色器的位置变量apos
     let aposLocation = gl.getAttribLocation(program, 'apos');
 
-    // 创建缓冲区对象
     let pointsBuffer = gl.createBuffer();
 
-    // 绑定缓冲区对象，激活buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, pointsBuffer);
 
-    // 顶点数组pointsArr传入缓冲区
-    gl.bufferData(gl.ARRAY_BUFFER, pointsArr, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, pointsArr, gl.STREAM_DRAW);
 
-    // 缓冲区中的数据按照一定的规律传递给位置变量apos
-    gl.vertexAttribPointer(aposLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(aposLocation, 3, gl.FLOAT, false, 0, 0);
 
-    // 允许数据传递
     gl.enableVertexAttribArray(aposLocation);
 
-    // 开始绘制
-    gl.drawArrays(gl.LINE_LOOP, 0, 4);
+    gl.drawArrays(gl.LINE_LOOP, 0, 3);
 </script>
 </html>

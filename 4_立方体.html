@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>立方体</title>
+    <script src="./initShader.js"></script>
+</head>
+<body>
+    <canvas id="webgl" width="500" height="500" style="background-color: #f2f2f2;"></canvas>
+</body>
+<!-- 顶点着色器源码 -->
+<script id="vertexShader" type="x-shader/x-vertex">
+    // attribute声明vec4类型变量
+    attribute vec4 apos;
+
+    void main() {
+        // 旋转角度30度转化为弧度值
+        float radian = radians(30.0);
+    
+        // 求解正弦函数 / 余弦函数
+        float cos = cos(radian);
+        float sin = sin(radian);
+
+        // 旋转矩阵（绕Z轴）
+        mat4 m4Z = mat4(
+            cos, sin, 0, 0,
+            -sin, cos, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        );
+
+        // 旋转矩阵（绕X轴）
+        mat4 m4Z = mat4(
+            1, 0, 0, 0,
+            0, cos, sin, 0,
+            0, -sin, cos, 0,
+            0, 0, 0, 1
+        );
+
+        // 旋转矩阵（绕Y轴）
+        mat4 m4Z = mat4(
+            cos, 0, -sin, 0,
+            0, 1, 0, 0,
+            sin, 0, cos, 0,
+            0, 0, 0, 1
+        );
+
+        // 旋转矩阵左乘顶点坐标变量apos赋值给内置变量gl_Position
+        gl_Position = m4Z * m4X * m4Y * apos;
+    }
+</script>
+
+<!-- 片源着色器 -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+    void main() {
+        gl_FragColor = vec4(0.7, 0.5, 1.0, 1.0);
+    }
+</script>
+
+<script>
+        // 通过getElementById获取canvas画布
+    /** @type{HTMLCanvasElement} */
+    let canvas = document.getElementById('webgl');
+
+    // 通过getContext()获取WebGL上下文
+    /** @type{WebGLRenderingContext} */
+    let gl = canvas.getContext('webgl');
+
+    // 顶点着色器源码
+    let vertexShaderSource = document.getElementById('vertexShader').innerText;
+
+    // 片源着色器源码
+    let fragmentShaderSource = document.getElementById('fragmentShader').innerText;
+
+    // 初始化着色器
+    let program = initShader(gl, vertexShaderSource, fragmentShaderSource);
+
+    // 使用program
+    gl.useProgram(program);
+
+    const pointsArr = new Float32Array([
+        // 立方体前面四个点
+        0.5, -0.5, 0.5,
+        -0.5, -0.5, 0.5,
+        -0.5, -0.5, -0.5,
+        0.5, -0.5, -0.5,
+
+        // 立方体后面四个点
+        0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5,
+        -0.5, 0.5, -0.5,
+        0.5, 0.5, -0.5,
+
+        // 两两对应为一组
+        0.5, -0.5, 0.5,
+        0.5, 0.5, 0.5,
+
+        -0.5, -0.5, 0.5,
+        -0.5, 0.5, 0.5,
+
+        -0.5, -0.5, -0.5,
+        -0.5, 0.5, -0.5,
+
+        0.5, -0.5, -0.5,
+        0.5, 0.5, -0.5
+    ])
+
+    let aposLocation = gl.getAttribLocation(program, 'apos');
+
+    vertexBuffer(pointsArr, aposLocation, 3, gl);
+
+    gl.drawArrays(gl.LINE_LOOP, 0, 4);
+    gl.drawArrays(gl.LINE_LOOP, 4, 4);
+    gl.drawArrays(gl.LINES, 0, 8);
+</script>
+</html>
